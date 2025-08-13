@@ -1,0 +1,8 @@
+version: 2
+
+sources:
+  - name: electricity_data
+    schema: electricity 
+    tables:
+      - name: raw_monthly_electricity_data
+      - name: dim_date

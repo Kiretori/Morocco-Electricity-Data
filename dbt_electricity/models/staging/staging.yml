@@ -1,0 +1,44 @@
+version: 2
+
+models:
+  - name: stg_morocco_generation
+    description: "Morocco's electricity generation categorized by energy type for each month."
+    columns:
+      - name: date_id
+        description: "The month corresponding to the data"
+        tests:
+          - not_null
+        data_type: date
+      - name: energy_category
+        data_type: text
+        tests:
+          - not_null
+      - name: energy_type
+        data_type: text
+        tests:
+          - not_null
+      - name: unit
+        data_type: text
+        tests:
+          - not_null
+      - name: value
+        data_type: double precision
+        tests:
+          - not_null
+  - name: stg_morocco_demand
+    description: "Morocco's electricity demands for each month."
+    columns:
+      - name: date_id
+        description: "The month corresponding to the data"
+        tests:
+          - not_null
+        data_type: date
+      - name: unit
+        data_type: text
+        tests:
+          - not_null
+      - name: value
+        data_type: double precision
+        tests:
+          - not_null
+    
