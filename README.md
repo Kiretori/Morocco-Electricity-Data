@@ -28,7 +28,7 @@ This pipeline downloads electricity data from a public source and processes it t
 ### Airflow DAG
 ![Alt text][DAG]
 
-[DAG]: docs/images/dbt_job.png
+[DAG]: docs/images/dag.png
 
 ### Technologies
 
