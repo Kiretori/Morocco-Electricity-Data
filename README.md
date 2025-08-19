@@ -1,31 +1,92 @@
 # Morocco Electricity Data Pipeline
 
-Analytics pipeline for Morocco's electricity sector using Airflow and dbt.
+An Apache Airflow pipeline that processes and analyzes Morocco's electricity data using dbt transformations.
 
 ## Overview
 
-Processes electricity generation, demand, emissions, and import data for Morocco. Built with dbt transformations orchestrated through Apache Airflow.
+This pipeline downloads electricity data from a public source and processes it through several dbt models to analyze:
 
-## Structure
-
-- `dags/` - Airflow DAGs for pipeline orchestration
-- `dbt_electricity/` - dbt project with staging and mart models
-- `models/staging/` - Raw data cleaning and standardization
-- `models/marts/` - Business logic and final analytics tables
-
-## Key Datasets
-
-- Electricity generation by source
-- Energy demand patterns
-- CO2 emissions data
+- Electricity generation by source type
+- Power sector emissions
+- Electricity demand patterns
 - Import/export flows
+
+## Architecture
+
+### Data Flow
+
+![Alt text][diagram]
+
+[diagram]: docs/images/diagram_light.svg
+
+1. Raw data ingestion from Ember Energy's Google Cloud Storage
+2. Load into PostgreSQL database
+3. dbt transformations:
+   - Staging models for initial data cleaning
+   - Mart models for business analytics
+
+### Airflow DAG
+![Alt text][DAG]
+
+[DAG]: docs/images/dbt_job.png
+
+### Technologies
+
+- Apache Airflow (orchestration)
+- dbt (data transformations)
+- PostgreSQL (data warehouse)
+- astronomer-cosmos (Airflow-dbt integration)
+
+## Project Structure
+
+```bash
+├── dags/
+│   └── dbt_dag.py         # Main Airflow DAG
+├── dbt_electricity/
+│   ├── models/
+│   │   ├── staging/       # Initial data cleaning
+│   │   └── marts/         # Business-focused transforms
+│   └── dbt_project.yml
+└── requirements.txt
+```
 
 ## Setup
 
-1. Configure database connection in Airflow
-2. Set required variables in Airflow UI
-3. Deploy with Astro CLI: `astro dev start`
+1. Start the airflow container with:
 
-## Models
+```bash
+astro dev start
+```
 
-Pipeline generates yearly and detailed views of Morocco's electricity metrics including generation mix, emissions intensity, and demand forecasting.
+2. Set required Airflow variables in the Airflow UI:
+
+- `POSTGRES_CONN_ID`: PostgreSQL connection ID
+- `DBT_SCHEMA`: Target schema for dbt models
+- SMTP connection
+
+## Data Models
+
+### Staging Models
+
+- `stg_morocco_raw`: Base cleaned data
+- `stg_morocco_generation`: Electricity generation data
+- `stg_morocco_emissions`: Emissions data
+- `stg_morocco_demand`: Demand data
+- `stg_morocco_imports`: Import/export data
+
+### Mart Models
+
+- `mart_morocco_generation`: Monthly generation by source
+- `mart_morocco_generation_clean`: Clean energy sources
+- `mart_morocco_generation_fossil`: Fossil fuel sources
+- `mart_morocco_emissions`: Monthly emissions data
+- `mart_yearly_morocco_demand`: Yearly demand aggregations
+- `mart_yearly_morocco_generation`: Yearly generation totals
+
+## Pipeline Schedule
+
+The pipeline runs daily and performs the following steps:
+
+1. Downloads latest electricity data from Ember Energy's Google Cloud Storage
+2. Loads raw data into PostgreSQL
+3. Runs dbt transformations
